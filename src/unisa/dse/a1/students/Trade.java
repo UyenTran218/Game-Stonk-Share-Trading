@@ -12,8 +12,9 @@ public class Trade implements Comparable<Trade> {
 	/**
 	 * @return Track the moment in time this Trade was created
 	 */
-	public void getCreated()
+	public long getCreated()
 	{
+		return created;
 	}
 	
 	public String listedCompanyCode;
@@ -21,7 +22,8 @@ public class Trade implements Comparable<Trade> {
 	/**
 	 * @return The company's code
 	 */
-	public void getCompanyCode() {
+	public String getCompanyCode() {
+		return listedCompanyCode;
 	}
 	
 	private int shareQuantity;
@@ -29,7 +31,8 @@ public class Trade implements Comparable<Trade> {
 	/**
 	 * @return The quantity of shares to trade
 	 */
-	public void getShareQuantity() {
+	public int getShareQuantity() {
+		return shareQuantity;
 	}
 
 	private StockBroker broker;
@@ -37,7 +40,8 @@ public class Trade implements Comparable<Trade> {
 	/**
 	 * @return The broker associated with this trade
 	 */
-	public void getStockBroker() {
+	public StockBroker getStockBroker() {
+		return broker;
 	}
 
 
@@ -48,6 +52,7 @@ public class Trade implements Comparable<Trade> {
 	{
 		created = System.nanoTime(); //do not change this
 		tradeId = id; //do not change this
+		try { Thread.sleep(100); } catch (Exception x) {}
 	}
 	
 	/***
@@ -62,7 +67,10 @@ public class Trade implements Comparable<Trade> {
 	{
 		created = System.nanoTime(); //do not change this
 		tradeId = System.nanoTime(); //do not change this
-		
+		try { Thread.sleep(100); } catch (Exception x) {}
+		this.listedCompanyCode = listedCompanyCode;
+		this.broker = broker;
+		this.shareQuantity = shareQuantity;
 	}
 	
 	/**
@@ -80,6 +88,28 @@ public class Trade implements Comparable<Trade> {
 	 */
 	public int compareTo(Trade t)
 	{
+		if(broker.getWatchlist().contains(this.listedCompanyCode) 
+				&& t.broker.getWatchlist().contains(t.listedCompanyCode)) {
+			return 0;
+		}
+		
+		if(!broker.getWatchlist().contains(this.listedCompanyCode) 
+				&& t.broker.getWatchlist().contains(t.listedCompanyCode)) {
+			return -1;
+		}
+		else 
+			if(!broker.getWatchlist().contains(this.listedCompanyCode) 
+				&& !t.broker.getWatchlist().contains(t.listedCompanyCode)) {
+			if(this.created < t.created) {
+				return -1;
+			}
+			if(this.created == t.created) {
+				return 0;
+			}
+			return 1;
+		}
+			
+		return 1;
 	}
 	
 
